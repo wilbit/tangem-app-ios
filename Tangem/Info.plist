@@ -94,6 +94,8 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Face ID is needed to DO STUFF</string>
 	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
 	<array>
 		<string>A000000812010208</string>
