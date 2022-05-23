@@ -52,6 +52,9 @@ target 'Tangem' do
   
   pod 'SkeletonUI', '~> 1.0.7'
   
+  # Analytics
+  pod 'Amplitude', '~> 8.8.0'
+  
   target 'TangemTests' do
     inherit! :search_paths
     # Pods for testing
