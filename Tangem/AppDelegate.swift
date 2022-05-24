@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import AppsFlyerLib
+import Amplitude
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -51,7 +52,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppsFlyerLib.shared().appleAppID = "1354868448"
         NotificationCenter.default.addObserver(self, selector: NSSelectorFromString("sendLaunch"),
                                                name: UIApplication.didBecomeActiveNotification, object: nil)
-
+        Amplitude.instance().trackingSessionEvents = true
+        // Initialize SDK
+//        Amplitude.instance().initializeApiKey("API_KEY")
+        // Set userId
+//        Amplitude.instance().setUserId("userId")
+        
         #if RELEASE
         FirebaseApp.configure()
         #else
