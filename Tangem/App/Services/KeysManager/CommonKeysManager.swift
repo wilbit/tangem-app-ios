@@ -56,6 +56,10 @@ extension CommonKeysManager: KeysManager {
     var shopifyShop: ShopifyShop {
         keys.shopifyShop
     }
+    
+    var amplitudeApiKey: String {
+        keys.amplitudeApiKey
+    }
 }
 
 extension CommonKeysManager {
@@ -67,11 +71,12 @@ extension CommonKeysManager {
         let blockcypherTokens: [String]
         let infuraProjectId: String
         let appsFlyerDevKey: String
+        let amplitudeApiKey: String
         let shopifyShop: ShopifyShop
         
         fileprivate static var empty: Keys {
             .init(moonPayApiKey: "", moonPayApiSecretKey: "", onramperApiKey: "", blockchairApiKey: "",
-                  blockcypherTokens: [], infuraProjectId: "", appsFlyerDevKey: "",
+                  blockcypherTokens: [], infuraProjectId: "", appsFlyerDevKey: "", amplitudeApiKey: "",
                   shopifyShop: .init(domain: "", storefrontApiKey: "", merchantID: ""))
         }
     }

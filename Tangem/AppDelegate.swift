@@ -53,10 +53,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: NSSelectorFromString("sendLaunch"),
                                                name: UIApplication.didBecomeActiveNotification, object: nil)
         Amplitude.instance().trackingSessionEvents = true
-        // Initialize SDK
-//        Amplitude.instance().initializeApiKey("API_KEY")
-        // Set userId
-//        Amplitude.instance().setUserId("userId")
+        Amplitude.instance().initializeApiKey(CommonKeysManager().amplitudeApiKey)
+        Amplitude.instance().setServerZone(AMPServerZone.EU)
         
         #if RELEASE
         FirebaseApp.configure()
