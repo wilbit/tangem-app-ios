@@ -67,6 +67,10 @@ class TotalSumBalanceViewModel: ObservableObject {
                 var totalFiatValue: Decimal = 0.0
                 for token in self.tokenItemViewModels {
                     if token.state.isSuccesfullyLoaded {
+                        if token.rate.isEmpty && !token.isCustom && !token.state.isNoAccount {
+                            hasError = .imposibleCalculateAmount
+                            break
+                        }
                         totalFiatValue += token.fiatValue
                     }
                     
@@ -98,5 +102,13 @@ class TotalSumBalanceViewModel: ObservableObject {
         
         attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 20, weight: .semibold), range: rangeAfterDecimal)
         return attributedString
+    }
+}
+
+extension TotalSumBalanceViewModel {
+    enum TotalBalanceError {
+        case none
+        case imposibleCalculateAmount
+        case someNetworkUnreachable
     }
 }
