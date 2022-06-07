@@ -145,6 +145,10 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
         return false
     }
     
+    var canDeleteAccessCodes: Bool {
+        tangemSdk.createAccessCodeRepository().hasAccessCodes()
+    }
+    
     var isSuccesfullyLoaded: Bool {
         if let walletModels = state.walletModels {
             if walletModels.contains(where: { !$0.state.isSuccesfullyLoaded }) {
@@ -462,6 +466,11 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
                 completion(.failure(error))
             }
         }
+    }
+    
+    func deleteAccessCodes() {
+        let accessCodeRepository = self.tangemSdk.createAccessCodeRepository()
+        accessCodeRepository.removeAllAccessCodes()
     }
     
     func resetToFactory(completion: @escaping (Result<Void, Error>) -> Void) {

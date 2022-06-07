@@ -76,6 +76,10 @@ class DetailsViewModel: ViewModel, ObservableObject {
        return cardModel.cardInfo.card.backupStatus == .noBackup
     }
     
+    var canDeleteAccessCodes: Bool {
+        cardModel.canDeleteAccessCodes
+    }
+    
     var shouldShowWC: Bool {
         if cardModel.cardInfo.isTangemNote {
             return false
@@ -254,5 +258,16 @@ class DetailsViewModel: ViewModel, ObservableObject {
         default:
             return nil
         }
+    }
+    
+    func deleteAccessCodes() {
+        let okButton = Alert.Button.default(Text("common_ok".localized)) {
+            self.cardModel.deleteAccessCodes()
+        }
+        
+        error = AlertBinder(alert: Alert(title: Text("common_attention".localized),
+                                         message: Text("WILL BE REMOVED!!!"),
+                                         primaryButton: .cancel(),
+                                         secondaryButton: okButton))
     }
 }

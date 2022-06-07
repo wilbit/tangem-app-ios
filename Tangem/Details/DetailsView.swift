@@ -12,7 +12,7 @@ import TangemSdk
 
 struct DetailsView: View {
     private enum NavigationTag: String {
-        case currency, disclaimer, cardTermsOfUse, securityManagement, cardOperation, manageTokens, walletConnect, backup, resetToFactory
+        case currency, disclaimer, cardTermsOfUse, securityManagement, cardOperation, manageTokens, walletConnect, backup, deleteAccessCodes, resetToFactory
     }
     
     @ObservedObject var viewModel: DetailsViewModel
@@ -76,6 +76,8 @@ struct DetailsView: View {
                 if viewModel.backupVisible {
                     createBackupRow
                 }
+                
+                deleteAccessCodesRow
                 
                 resetToFactoryRow
             }
@@ -141,6 +143,20 @@ struct DetailsView: View {
                 .environmentObject(navigation)
                 .navigationBarHidden(true)
         })
+    }
+    
+    // MARK: Delete access codes
+    
+    @ViewBuilder
+    private var deleteAccessCodesRow: some View {
+        Button {
+            self.viewModel.deleteAccessCodes()
+        } label: {
+            Text("DELETE ACC CODES")
+                .font(.system(size: 16, weight: .regular, design: .default))
+                .foregroundColor(viewModel.canDeleteAccessCodes ? .tangemGrayDark6 : .tangemGrayDark)
+        }
+        .disabled(!viewModel.canDeleteAccessCodes)
     }
     
     // MARK: Reset row
