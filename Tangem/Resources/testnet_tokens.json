@@ -420,6 +420,16 @@
                     "networkId" : "stellar/test"
                 }
             ]
+        },
+        {
+            "id" : "near",
+            "symbol" : "NEAR",
+            "name" : "Near",
+            "networks" : [
+                {
+                    "networkId" : "near/test"
+                }
+            ]
         }
     ],
     
