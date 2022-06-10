@@ -68,8 +68,7 @@ class TotalSumBalanceViewModel: ObservableObject {
                 for token in self.tokenItemViewModels {
                     if token.state.isSuccesfullyLoaded {
                         if token.rate.isEmpty && !token.isCustom && !token.state.isNoAccount {
-                            hasError = .imposibleCalculateAmount
-                            break
+                            hasTotalBalanceError = true
                         }
                         totalFiatValue += token.fiatValue
                     }
