@@ -68,11 +68,12 @@ struct OnboardingAccessCodeView: View {
         }
     }
     
-    let successHandler: (String) -> Void
+    let successHandler: (String, Bool) -> Void
     
     @State private var state: ViewState = .intro
     @State private var firstEnteredCode: String = ""
     @State private var secondEnteredCode: String = ""
+    @State private var saveAccessCodeWithBiometry = true
     @State private var error: AccessCodeError = .none
     
     @ViewBuilder
@@ -121,6 +122,10 @@ struct OnboardingAccessCodeView: View {
                                 password: state == .inputCode ? $firstEnteredCode : $secondEnteredCode,
                                 onCommit: {})
         .frame(height: 44)
+        
+        if state == .repeatCode {
+            Toggle("Save access code", isOn: $saveAccessCodeWithBiometry)
+        }
     }
     
     var body: some View {
@@ -167,7 +172,7 @@ struct OnboardingAccessCodeView: View {
                         return
                     }
                     
-                    successHandler(secondEnteredCode)
+                    successHandler(secondEnteredCode, saveAccessCodeWithBiometry)
                     return
                 }
                 
@@ -251,6 +256,6 @@ struct CustomPasswordTextField: View {
 
 struct OnboardingAccessCodeView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingAccessCodeView(successHandler: { _ in })
+        OnboardingAccessCodeView(successHandler: { _, _ in })
     }
 }

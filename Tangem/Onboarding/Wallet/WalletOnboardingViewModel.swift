@@ -429,6 +429,31 @@ class WalletOnboardingViewModel: OnboardingViewModel<WalletOnboardingStep>, Obse
         }
     }
     
+    func saveAccessCode(_ code: String, useLocalStorage: Bool) {
+        guard let primaryCardId = backupService.primaryCardId else {
+            return
+        }
+        
+        let cardIds = [primaryCardId] + backupService.backupCardIds
+        
+        let accessCodeRepository = tangemSdk.createAccessCodeRepository()
+        if !useLocalStorage {
+            saveAccessCode(code)
+            accessCodeRepository.setIgnoreCards(with: cardIds, ignore: true)
+            return
+        }
+        
+        accessCodeRepository.saveAccessCode(code, for: cardIds) { [weak self] result in
+            guard case .success = result else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self?.saveAccessCode(code)
+            }
+        }
+    }
+    
     func saveAccessCode(_ code: String) {
         navigation.onboardingWalletToAccessCode = false
         do {

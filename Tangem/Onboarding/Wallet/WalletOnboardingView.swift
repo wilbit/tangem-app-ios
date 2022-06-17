@@ -144,8 +144,8 @@ struct WalletOnboardingView: View {
             
             Color.clear.frame(width: 1, height: 1)
                 .sheet(isPresented: $navigation.onboardingWalletToAccessCode, content: {
-                    OnboardingAccessCodeView { accessCode in
-                        viewModel.saveAccessCode(accessCode)
+                    OnboardingAccessCodeView { accessCode, useLocalStorage in
+                        viewModel.saveAccessCode(accessCode, useLocalStorage: useLocalStorage)
                     }})
         }
         .alert(item: $viewModel.alert, content: { alertBinder in
