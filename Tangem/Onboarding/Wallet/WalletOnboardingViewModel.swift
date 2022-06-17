@@ -546,6 +546,7 @@ class WalletOnboardingViewModel: OnboardingViewModel<WalletOnboardingStep>, Obse
                 
                 self.tangemSdk.startSession(with: PreparePrimaryCardTask(),
                                             cardId: cardId,
+                                            useSavedAccessCodes: false,
                                             initialMessage: Message(header: nil,
                                                                     body: "initial_message_create_wallet_body".localized)) {[weak self] result in
                     switch result {
