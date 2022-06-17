@@ -382,7 +382,7 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
     // MARK: - Security
     
     func checkPin(_ completion: @escaping (Result<CheckUserCodesResponse, Error>) -> Void) {
-        tangemSdk.startSession(with: CheckUserCodesCommand(), cardId: cardInfo.card.cardId) { [weak self] (result) in
+        tangemSdk.startSession(with: CheckUserCodesCommand(), cardId: cardInfo.card.cardId, useSavedAccessCodes: false) { [weak self] (result) in
             switch result {
             case .success(let resp):
                 self?.cardPinSettings = CardPinSettings(isPin1Default: !resp.isAccessCodeSet, isPin2Default: !resp.isPasscodeSet)
@@ -399,6 +399,7 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
         case .accessCode:
             tangemSdk.startSession(with: SetUserCodeCommand(accessCode: nil),
                                    cardId: cardInfo.card.cardId,
+                                   useSavedAccessCodes: false,
                                    initialMessage: Message(header: nil, body: "initial_message_change_access_code_body".localized)) {[weak self] result in
                 guard let self = self else { return }
                 
@@ -415,7 +416,8 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
             }
         case .longTap:
             tangemSdk.startSession(with: SetUserCodeCommand.resetUserCodes,
-                                   cardId: cardInfo.card.cardId) {[weak self] result in
+                                   cardId: cardInfo.card.cardId,
+                                   useSavedAccessCodes: false) {[weak self] result in
                 guard let self = self else { return }
                 
                 switch result {
@@ -432,6 +434,7 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
         case .passCode:
             tangemSdk.startSession(with: SetUserCodeCommand(passcode: nil),
                                    cardId: cardInfo.card.cardId,
+                                   useSavedAccessCodes: false,
                                    initialMessage: Message(header: nil, body: "initial_message_change_passcode_body".localized)) {[weak self] result in
                 guard let self = self else { return }
                 
@@ -455,6 +458,7 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
         let card = self.cardInfo.card
         tangemSdk.startSession(with: CreateWalletAndReadTask(with: cardInfo.defaultBlockchain?.curve),
                                cardId: cardInfo.card.cardId,
+                               useSavedAccessCodes: false,
                                initialMessage: Message(header: nil,
                                                        body: "initial_message_create_wallet_body".localized)) {[weak self] result in
             switch result {

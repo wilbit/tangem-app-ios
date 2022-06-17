@@ -87,7 +87,7 @@ class TwinsWalletCreationService {
     
     private func createWalletOnFirstCard() {
         let task = TwinsCreateWalletTask(firstTwinCardId: nil, fileToWrite: nil, walletManagerFactory: nil)
-        tangemSdkProvider.sdk.startSession(with: task, cardId: firstTwinCid, initialMessage: initialMessage(for: firstTwinCid)) { (result) in
+        tangemSdkProvider.sdk.startSession(with: task, cardId: firstTwinCid, useSavedAccessCodes: false, initialMessage: initialMessage(for: firstTwinCid)) { (result) in
             switch result {
             case .success(let response):
                 self.cardsRepository.lastScanResult.cardModel?.clearTwinPairKey()
@@ -114,7 +114,7 @@ class TwinsWalletCreationService {
         //		switch twinFileToWrite(publicKey: firstTwinKey) {
         //		case .success(let file):
         let task = TwinsCreateWalletTask(firstTwinCardId: firstTwinCid, fileToWrite: firstTwinKey, walletManagerFactory: walletManagerFactory)
-        tangemSdkProvider.sdk.startSession(with: task, /*cardId: secondTwinCid,*/ initialMessage: Message(header: "Scan card #\(series.pair.number)") /*initialMessage(for: secondTwinCid)*/) { (result) in
+        tangemSdkProvider.sdk.startSession(with: task, /*cardId: secondTwinCid,*/ useSavedAccessCodes: false, initialMessage: Message(header: "Scan card #\(series.pair.number)") /*initialMessage(for: secondTwinCid)*/) { (result) in
             switch result {
             case .success(let response):
                 self.secondTwinPublicKey = response.createWalletResponse.wallet.publicKey
@@ -141,7 +141,7 @@ class TwinsWalletCreationService {
         //		switch twinFileToWrite(publicKey: secondTwinKey) {
         //		case .success(let file):
         let task = TwinsFinalizeWalletCreationTask(fileToWrite: secondTwinKey)
-        tangemSdkProvider.sdk.startSession(with: task, cardId: firstTwinCid, initialMessage: initialMessage(for: firstTwinCid)) { [weak self] (result) in
+        tangemSdkProvider.sdk.startSession(with: task, cardId: firstTwinCid, useSavedAccessCodes: false, initialMessage: initialMessage(for: firstTwinCid)) { [weak self] (result) in
             guard let self = self else { return }
             
             switch result {
