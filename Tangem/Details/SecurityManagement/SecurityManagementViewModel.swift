@@ -11,24 +11,15 @@ import SwiftUI
 import Combine
 
 class SecurityManagementViewModel: ViewModel, ObservableObject {
-    @Published var cardViewModel: CardViewModel! {
-        didSet {
-            selectedOption = cardViewModel.currentSecOption
-            cardViewModel.objectWillChange
-                .receive(on: DispatchQueue.main)
-                .sink(receiveValue: { [weak self] in
-                    self?.selectedOption = self?.cardViewModel.currentSecOption ?? .longTap
-                    self?.objectWillChange.send()
-                })
-                .store(in: &bag)
-        }
-    }
-    
     @Published var error: AlertBinder?
+    @Published var availableSecOptions: [SecurityManagementOption] = []
     @Published var selectedOption: SecurityManagementOption = .longTap
+    
     @Published var isLoading: Bool = false
     
-    var accessCodeDisclaimer: String? {
+    var currentSecOption: SecurityManagementOption { cardViewModel.currentSecOption }
+    
+    var showAccessCodeDisclaimer: String? {
         if cardViewModel.cardInfo.isTangemWallet, cardViewModel.cardInfo.card.backupStatus == .noBackup {
             return "manage_security_access_code_disclaimer".localized
         }
@@ -43,6 +34,26 @@ class SecurityManagementViewModel: ViewModel, ObservableObject {
     }
     
     private var bag = Set<AnyCancellable>()
+    private var cardViewModel: CardViewModel
+    
+    init(cardViewModel: CardViewModel) {
+        self.cardViewModel = cardViewModel
+        
+        self.availableSecOptions = cardViewModel.availableSecOptions
+        self.selectedOption = cardViewModel.currentSecOption
+    }
+    
+    func cardViewModelBinding() {
+        self.cardViewModel.objectWillChange
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] in
+                self?.availableSecOptions = self?.cardViewModel.availableSecOptions ?? []
+                
+                self?.selectedOption = self?.cardViewModel.currentSecOption ?? .longTap
+                self?.objectWillChange.send()
+            })
+            .store(in: &bag)
+    }
     
     func onTap() {
         switch selectedOption {
@@ -62,6 +73,17 @@ class SecurityManagementViewModel: ViewModel, ObservableObject {
                     self.error = error.alertBinder
                 }
             }
+        }
+    }
+    
+    func isEnabled(option: SecurityManagementOption) -> Bool {
+        switch option {
+        case .accessCode:
+            return cardViewModel.canSetAccessCode
+        case .longTap:
+            return cardViewModel.canSetLongTap
+        case .passCode:
+            return cardViewModel.canSetPasscode
         }
     }
 }
