@@ -73,7 +73,7 @@ struct OnboardingAccessCodeView: View {
     @State private var state: ViewState = .intro
     @State private var firstEnteredCode: String = ""
     @State private var secondEnteredCode: String = ""
-    @State private var saveAccessCodeWithBiometry = true
+    @State private var saveAccessCodeWithBiometrics = true
     @State private var error: AccessCodeError = .none
     
     @ViewBuilder
@@ -124,7 +124,7 @@ struct OnboardingAccessCodeView: View {
         .frame(height: 44)
         
         if state == .repeatCode {
-            Toggle("Save access code", isOn: $saveAccessCodeWithBiometry)
+            Toggle("Save access code", isOn: $saveAccessCodeWithBiometrics)
         }
     }
     
@@ -172,7 +172,7 @@ struct OnboardingAccessCodeView: View {
                         return
                     }
                     
-                    successHandler(secondEnteredCode, saveAccessCodeWithBiometry)
+                    successHandler(secondEnteredCode, saveAccessCodeWithBiometrics)
                     return
                 }
                 
