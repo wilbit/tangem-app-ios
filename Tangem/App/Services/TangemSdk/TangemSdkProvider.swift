@@ -26,6 +26,7 @@ class TangemSdkProvider: TangemSdkProviding {
         
         config.filter.issuerFilter = .deny(["TTM BANK"])
         config.allowUntrustedCards = true
+        config.localAuthenticationReason = "Tangem App authentication reason"
         return config
     }()
     
