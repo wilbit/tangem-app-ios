@@ -101,11 +101,11 @@ class SecurityManagementViewModel: ViewModel, ObservableObject {
     }
     
     func resetAccessCode() {
-//        navigation.securityToWarning = true
+        navigation.securityToWarning = true
         
-        cardViewModel.changeSecOption(.accessCode) { result in
-            print(result)
-        }
+//        cardViewModel.changeSecOption(.accessCode) { result in
+//            print(result)
+//        }
     }
     
     func isEnabled(option: SecurityManagementOption) -> Bool {
