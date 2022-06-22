@@ -12,12 +12,8 @@ import SwiftUI
 struct SecurityManagementRowView: View {
     @Binding var selectedOption: SecurityManagementOption
     let option: SecurityManagementOption
-    let isEnabled: Bool
-    
-    @EnvironmentObject var cardViewModel: CardViewModel
-    
 
-    
+    let isEnabled: Bool
     var isSelected: Bool { selectedOption == option }
     
     var body: some View {

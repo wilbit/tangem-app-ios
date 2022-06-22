@@ -200,9 +200,8 @@ extension Assembly {
             return restored
         }
         
-        let vm = SecurityManagementViewModel()
+        let vm = SecurityManagementViewModel(cardViewModel: card)
         initialize(vm)
-        vm.cardViewModel = card
         return vm
     }
     

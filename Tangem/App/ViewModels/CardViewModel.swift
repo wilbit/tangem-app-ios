@@ -43,20 +43,6 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
     private var assembly: Assembly { assemblyProvider.assembly }
     private var tangemSdk: TangemSdk { tangemSdkProvider.sdk }
     
-    var availableSecOptions: [SecurityManagementOption] {
-        var options = [SecurityManagementOption.longTap]
-        
-        if featuresService.canSetAccessCode || currentSecOption == .accessCode {
-            options.append(.accessCode)
-        }
-        
-        if featuresService.canSetPasscode || isTwinCard || currentSecOption == .passCode {
-            options.append(.passCode)
-        }
-        
-        return options
-    }
-    
     var walletModels: [WalletModel]? {
         return state.walletModels
     }
@@ -393,7 +379,7 @@ class CardViewModel: Identifiable, ObservableObject, Initializable {
     func changeSecOption(_ option: SecurityManagementOption, completion: @escaping (Result<Void, Error>) -> Void) {
         switch option {
         case .accessCode:
-            tangemSdk.startSession(with: SetUserCodeCommand(accessCode: nil),
+            tangemSdk.startSession(with: SetUserCodeCommand(accessCode: "0000"),
                                    cardId: cardInfo.card.cardId,
                                    initialMessage: Message(header: nil, body: "initial_message_change_access_code_body".localized)) {[weak self] result in
                 guard let self = self else { return }

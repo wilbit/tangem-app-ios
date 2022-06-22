@@ -9,22 +9,28 @@
 import Foundation
 import SwiftUI
 import Combine
+import TangemSdk
 
 class SecurityManagementViewModel: ViewModel, ObservableObject {
+    @Injected(\.appFeaturesService) private var featuresService: AppFeaturesProviding
+    
     @Published var error: AlertBinder?
     @Published var availableSecOptions: [SecurityManagementOption] = []
+    @Published var availablePrivacyOptions: [PrivacyManagementOption] = []
+    
     @Published var selectedOption: SecurityManagementOption = .longTap
     
     @Published var isLoading: Bool = false
     
     var currentSecOption: SecurityManagementOption { cardViewModel.currentSecOption }
     
-    var showAccessCodeDisclaimer: String? {
-        if cardViewModel.cardInfo.isTangemWallet, cardViewModel.cardInfo.card.backupStatus == .noBackup {
-            return "manage_security_access_code_disclaimer".localized
+    var showAccessCodeDisclaimer: Bool {
+        if cardViewModel.cardInfo.isTangemWallet,
+           cardViewModel.cardInfo.card.backupStatus == .noBackup {
+            return true
         }
         
-        return nil
+        return false
     }
     
     var actionButtonPressedHandler: (_ completion: @escaping (Result<Void, Error>) -> Void) -> Void {
@@ -35,24 +41,42 @@ class SecurityManagementViewModel: ViewModel, ObservableObject {
     
     private var bag = Set<AnyCancellable>()
     private var cardViewModel: CardViewModel
+    private var card: Card { cardViewModel.cardInfo.card }
     
     init(cardViewModel: CardViewModel) {
         self.cardViewModel = cardViewModel
         
-        self.availableSecOptions = cardViewModel.availableSecOptions
         self.selectedOption = cardViewModel.currentSecOption
+        
+        super.init()
+        
+        updateAvailableSecOptions()
+        updateAvailablePrivacyOptions()
     }
     
     func cardViewModelBinding() {
-        self.cardViewModel.objectWillChange
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] in
-                self?.availableSecOptions = self?.cardViewModel.availableSecOptions ?? []
-                
-                self?.selectedOption = self?.cardViewModel.currentSecOption ?? .longTap
-                self?.objectWillChange.send()
-            })
+        cardViewModel
+            .$currentSecOption
+            .weakAssign(to: \.selectedOption, on: self)
             .store(in: &bag)
+    }
+    
+    func updateAvailableSecOptions() {
+        var options = [SecurityManagementOption.longTap]
+        
+        if featuresService.canSetAccessCode || currentSecOption == .accessCode {
+            options.append(.accessCode)
+        }
+
+        if featuresService.canSetPasscode || card.isTwinCard || currentSecOption == .passCode {
+            options.append(.passCode)
+        }
+
+        availableSecOptions = options
+    }
+    
+    func updateAvailablePrivacyOptions() {
+        availablePrivacyOptions.append(.resetPassword)
     }
     
     func onTap() {
@@ -73,6 +97,14 @@ class SecurityManagementViewModel: ViewModel, ObservableObject {
                     self.error = error.alertBinder
                 }
             }
+        }
+    }
+    
+    func resetAccessCode() {
+//        navigation.securityToWarning = true
+        
+        cardViewModel.changeSecOption(.accessCode) { result in
+            print(result)
         }
     }
     
@@ -117,4 +149,10 @@ enum SecurityManagementOption: CaseIterable, Identifiable {
             return "details_manage_security_passcode_description".localized
         }
     }
+}
+
+enum PrivacyManagementOption: String, CaseIterable, Identifiable {
+    case resetPassword
+    
+    var id: String { rawValue }
 }

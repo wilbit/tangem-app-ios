@@ -15,46 +15,16 @@ struct SecurityManagementView: View {
     @EnvironmentObject var navigation: NavigationCoordinator
     
     var body: some View {
-        VStack {
+        ZStack(alignment: .bottom) {
             List {
-                Section(content: {
-                    ForEach(viewModel.availableSecOptions) { option in
-                        SecurityManagementRowView(
-                            selectedOption: $viewModel.selectedOption,
-                            option: option,
-                            isEnabled: viewModel.isEnabled(option: option)
-                        )
-//                            .environmentObject(self.viewModel.cardViewModel)
-                    }
-                }, footer: {
-                    if viewModel.accessCodeDisclaimer != nil {
-                        HStack(spacing: 0) {
-                            Spacer()
-                            Text(viewModel.accessCodeDisclaimer!)
-                                .font(.body)
-                                .foregroundColor(.tangemGrayDark)
-                                .multilineTextAlignment(.center)
-                                .padding(.top, 4)
-                            Spacer()
-                        }
-                    } else {
-                        EmptyView()
-                    }
-                })
+                securitySection
+                
+                privacySection
             }
             .listRowInsets(EdgeInsets())
             .listStyle(GroupedListStyle())
             
-            
-            TangemButton(title: viewModel.selectedOption == .longTap ? "common_save_changes" : "common_continue") {
-                self.viewModel.onTap()
-            }.buttonStyle(TangemButtonStyle(colorStyle: .black,
-                                            layout: .flexibleWidth,
-                                            isDisabled: viewModel.selectedOption == viewModel.cardViewModel.currentSecOption,
-                                            isLoading: viewModel.isLoading))
-                .alert(item: $viewModel.error) { $0.alert }
-                .padding(.horizontal, 16.0)
-                .padding(.bottom, 16.0)
+            actionButton
             
             NavigationLink(destination: CardOperationView(title: viewModel.selectedOption.title,
                                                           alert: "details_security_management_warning".localized,
@@ -63,6 +33,72 @@ struct SecurityManagementView: View {
         }
         .background(Color.tangemBgGray.edgesIgnoringSafeArea(.all))
         .navigationBarTitle("details_manage_security_title", displayMode: .inline)
+    }
+    
+    // MARK: - SecuritySection
+    
+    @ViewBuilder
+    private var securitySection: some View {
+        Section(content: {
+            ForEach(viewModel.availableSecOptions) { option in
+                SecurityManagementRowView(
+                    selectedOption: $viewModel.selectedOption,
+                    option: option,
+                    isEnabled: viewModel.isEnabled(option: option)
+                )
+            }
+        }, header: {
+            Text("details_manage_security_title")
+        }, footer: {
+            firstSectionFooter
+        })
+    }
+    
+    @ViewBuilder
+    private var firstSectionFooter: some View {
+        if viewModel.showAccessCodeDisclaimer {
+            HStack(alignment: .center, spacing: 0) {
+                Text("manage_security_access_code_disclaimer".localized)
+                    .font(.body)
+                    .foregroundColor(.tangemGrayDark)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 4)
+            }
+        }
+    }
+    
+    // MARK: - Privacy Section
+    
+    @ViewBuilder
+    private var privacySection: some View {
+        if !viewModel.availablePrivacyOptions.isEmpty {
+            Section(content: {
+                ForEach(viewModel.availablePrivacyOptions) { option in
+                    Button {
+                        viewModel.resetAccessCode()
+                    } label: {
+                        Text("Reset access code")
+                    }
+                }
+            }, header: {
+                Text("details_manage_security_title")
+            })
+        }
+    }
+    
+    // MARK: - Action Button
+    
+    @ViewBuilder
+    private var actionButton: some View {
+        TangemButton(title: viewModel.selectedOption == .longTap ? "common_save_changes" : "common_continue") {
+            self.viewModel.onTap()
+        }.buttonStyle(TangemButtonStyle(colorStyle: .black,
+                                        layout: .flexibleWidth,
+                                        isDisabled: viewModel.selectedOption == viewModel.currentSecOption,
+                                        isLoading: viewModel.isLoading))
+            .alert(item: $viewModel.error) { $0.alert }
+            .padding(.horizontal, 16.0)
+            .padding(.bottom, 16.0)
     }
 }
 
