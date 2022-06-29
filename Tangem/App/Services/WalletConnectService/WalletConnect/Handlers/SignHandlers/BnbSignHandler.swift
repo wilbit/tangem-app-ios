@@ -48,8 +48,13 @@ fileprivate struct BinanceSingMessage<T: BinanceMessage>: Codable {
     let source: String
     
     private enum CodingKeys: String, CodingKey {
-        case accountNumber = "account_number", chainId = "chain_id", messages = "msgs"
-        case data, memo, sequence, source
+        case accountNumber = "account_number"
+        case chainId = "chain_id"
+        case messages = "msgs"
+        case data
+        case memo
+        case sequence
+        case source
     }
 
     func encode(to encoder: Encoder) throws {
@@ -115,10 +120,10 @@ class BnbSignHandler: WalletConnectSignHandler {
         
     }
     
-    override func sign(data: Data, cardId: String, walletPublicKey: Wallet.PublicKey) -> AnyPublisher<String, Error> {
+    override func sign(data: Data, walletPublicKey: Wallet.PublicKey) -> AnyPublisher<String, Error> {
         let hash = data.sha256()
         
-        return signer.sign(hash: hash, cardId: cardId, walletPublicKey: walletPublicKey)
+        return signer.sign(hash: hash, walletPublicKey: walletPublicKey)
             .tryMap { $0.hexString }
             .eraseToAnyPublisher()
     }
@@ -155,7 +160,7 @@ class BnbSignHandler: WalletConnectSignHandler {
             
             var uiMessage: String = ""
             let numberOfMessages = tradeMessage.messages.count
-            for i in 0..<numberOfMessages {
+            for i in 0 ..< numberOfMessages {
                 let message = tradeMessage.messages[i]
                 let price = Decimal(message.price) / decimalValue
                 let quantity = Decimal(message.quantity) / decimalValue

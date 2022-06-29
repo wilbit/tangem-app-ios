@@ -13,15 +13,15 @@ import Combine
 import BlockchainSdk
 
 fileprivate enum QueryKey: String {
-    case apiKey,
-         currencyCode,
-         walletAddress,
-         redirectURL,
-         baseCurrencyCode,
-         refundWalletAddress,
-         signature,
-         baseCurrencyAmount,
-         depositWalletAddress
+    case apiKey
+    case currencyCode
+    case walletAddress
+    case redirectURL
+    case baseCurrencyCode
+    case refundWalletAddress
+    case signature
+    case baseCurrencyAmount
+    case depositWalletAddres
 }
 
 fileprivate struct IpCheckResponse: Decodable {
@@ -32,16 +32,17 @@ fileprivate struct IpCheckResponse: Decodable {
     let isSellAllowed: Bool
     
     private enum CodingKeys: String, CodingKey {
-        case countryCode = "alpha3",
-             isMoonpayAllowed = "isAllowed",
-             stateCode = "state"
+        case countryCode = "alpha3"
+        case isMoonpayAllowed = "isAllowed"
+        case stateCode = "state"
         case isBuyAllowed, isSellAllowed
     }
 }
 
 fileprivate struct MoonpayCurrency: Decodable {
     enum CurrencyType: String, Decodable {
-        case crypto, fiat
+        case crypto
+        case fiat
     }
     
     let type: CurrencyType
@@ -62,17 +63,17 @@ class MoonPayService {
         "ZRX", "AAVE", "ALGO", "AXS", "BAT", "BNB", "BUSD", "BTC", "BCH", "BTT", "ADA", "CELO", "CUSD", "LINK", "CHZ", "COMP", "ATOM", "DAI", "DASH", "MANA", "DGB", "DOGE", "EGLD",
         "ENJ", "EOS", "ETC", "ETH", "KETH", "RINKETH", "FIL", "HBAR", "MIOTA", "KAVA", "KLAY", "LBC", "LTC", "LUNA", "MKR", "OM", "MATIC", "NANO", "NEAR", "XEM", "NEO", "NIM", "OKB",
         "OMG", "ONG", "ONT", "DOT", "QTUM", "RVN", "RFUEL", "KEY", "SRM", "SOL", "XLM", "STMX", "SNX", "KRT", "UST", "USDT", "XTZ", "RUNE", "SAND", "TOMO", "AVA", "TRX", "TUSD", "UNI",
-        "USDC", "UTK", "VET", "WAXP", "WBTC", "XRP", "ZEC", "ZIL"
+        "USDC", "UTK", "VET", "WAXP", "WBTC", "XRP", "ZEC", "ZIL",
     ]
     private var availableToSell: Set<String> = [
-        "BTC", "ETH", "BCH"
+        "BTC", "ETH", "BCH",
     ]
     
     private(set) var canBuyCrypto = true
     private(set) var canSellCrypto = true
     private var bag: Set<AnyCancellable> = []
 	
-	init() {}
+    init() {}
     
     deinit {
         print("MoonPay deinit")

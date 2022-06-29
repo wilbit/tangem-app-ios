@@ -33,7 +33,7 @@ class Analytics {
         log(event: .cardIsScanned, with: collectCardData(card))
         
         if card.isDemoCard {
-            log(event: .demoActivated, with: [.cardId : card.cardId])
+            log(event: .demoActivated, with: [.cardId: card.cardId])
         }
     }
     
@@ -112,7 +112,7 @@ class Analytics {
     }
     #endif
     
-#if !CLIP
+    #if !CLIP
     static func logShopifyOrder(_ order: Order) {
         var appsFlyerDiscountParams: [String: Any] = [:]
         var firebaseDiscountParams: [String: Any] = [:]
@@ -127,18 +127,18 @@ class Analytics {
         AppsFlyerLib.shared().logEvent(AFEventPurchase, withValues: appsFlyerDiscountParams.merging([
             AFEventParamContentId: sku,
             AFEventParamRevenue: order.total,
-            AFEventParamCurrency: order.currencyCode
+            AFEventParamCurrency: order.currencyCode,
         ], uniquingKeysWith: { $1 }))
 
         FirebaseAnalytics.Analytics.logEvent(AnalyticsEventPurchase, parameters: firebaseDiscountParams.merging([
             AnalyticsParameterItems: [
-                [AnalyticsParameterItemID: sku]
+                [AnalyticsParameterItemID: sku],
             ],
             AnalyticsParameterValue: order.total,
-            AnalyticsParameterCurrency: order.currencyCode
+            AnalyticsParameterCurrency: order.currencyCode,
         ], uniquingKeysWith: { $1 }))
     }
-#endif
+    #endif
     
     private static func collectCardData(_ card: Card, additionalParams: [ParameterKey: Any] = [:]) -> [ParameterKey: Any] {
         var params = additionalParams
@@ -214,7 +214,8 @@ extension Analytics {
     #if !CLIP
     enum WalletConnectEvent {
         enum SessionEvent {
-            case disconnect, connect
+            case disconnect
+            case connect
         }
         
         case error(Error, WalletConnectAction?), session(SessionEvent, URL), action(WalletConnectAction), invalidRequest(json: String?)
@@ -224,7 +225,7 @@ extension Analytics {
 
 fileprivate extension Dictionary where Key == Analytics.ParameterKey, Value == Any {
     var firebaseParams: [String: Any] {
-        var convertedParams = [String:Any]()
+        var convertedParams = [String: Any]()
         forEach { convertedParams[$0.key.rawValue] = $0.value }
         return convertedParams
     }

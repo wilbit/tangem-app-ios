@@ -20,7 +20,7 @@ struct CardInfo {
     var twinCardInfo: TwinCardInfo?
     var isTangemNote: Bool
     var isTangemWallet: Bool
-    var derivedKeys: [Data:[DerivationPath:ExtendedPublicKey]] = [:]
+    var derivedKeys: [Data: [DerivationPath: ExtendedPublicKey]] = [:]
     var primaryCard: PrimaryCard? = nil
     
     var imageLoadDTO: ImageLoadDTO {
@@ -29,9 +29,9 @@ struct CardInfo {
                      artwotkInfo: artworkInfo)
     }
     
-#if !CLIP
+    #if !CLIP
     var isTestnet: Bool {
-        if card.batchId == "99FF" { //TODO: TBD ??
+        if card.batchId == "99FF" { // TODO: TBD ??
             return card.cardId.starts(with: card.batchId.reversed())
         }
         
@@ -45,7 +45,7 @@ struct CardInfo {
             return nil
         }
         
-        let blockchainName = isTangemNote ? (walletData.blockchain.lowercased() == "binance" ? "bsc": walletData.blockchain)
+        let blockchainName = isTangemNote ? (walletData.blockchain.lowercased() == "binance" ? "bsc" : walletData.blockchain)
             : walletData.blockchain
         
         return Blockchain.from(blockchainName: blockchainName, curve: curve)
@@ -71,7 +71,7 @@ struct CardInfo {
         return StorageEntry(blockchainNetwork: network, tokens: tokens)
     }
     
-#endif
+    #endif
     
     var artworkInfo: ArtworkInfo? {
         switch artwork {
@@ -103,15 +103,9 @@ struct CardInfo {
 }
 
 enum CardArtwork: Equatable {
-    static func == (lhs: CardArtwork, rhs: CardArtwork) -> Bool {
-        switch (lhs, rhs) {
-        case (.notLoaded, .notLoaded), (.noArtwork, .noArtwork): return true
-        case (.artwork(let lhsArt), .artwork(let rhsArt)): return lhsArt == rhsArt
-        default: return false
-        }
-    }
-    
-    case notLoaded, noArtwork, artwork(ArtworkInfo)
+    case notLoaded
+    case noArtwork
+    case artwork(ArtworkInfo)
 }
 
 struct ImageLoadDTO: Equatable {
